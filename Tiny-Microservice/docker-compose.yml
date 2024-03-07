@@ -1,39 +1,6 @@
 version: "3.9"
 
 services:
-  identity:
-    container_name: Identity
-    build: 
-        dockerfile: Identity/Dockerfile
-        context: .
-    networks:
-        - TM-Network
-    ports:
-      - 3002:80
-    depends_on:
-        - rmq
-  search:  
-    container_name: Search  
-    build: 
-        dockerfile: Search/Dockerfile
-        context: .
-    networks:
-        - TM-Network
-    ports:
-      - 3001:80
-    depends_on:
-        - rmq
-  user:  
-    container_name: user  
-    build: 
-        dockerfile: user/Dockerfile
-        context: .
-    networks:
-        - TM-Network
-    ports:
-      - 3000:80
-    depends_on:
-        - rmq
   apigateway:  
     container_name: APIGateway  
     build: 
@@ -42,15 +9,60 @@ services:
     networks:
         - TM-Network
     ports:
+      - 3000:80
+    depends_on:
+      rmq:
+        condition: service_healthy
+
+  identity:
+    container_name: Identity
+    build: 
+        dockerfile: Identity/Dockerfile
+        context: .
+    networks:
+        - TM-Network
+    ports:
+      - 3001:80
+    depends_on:
+      rmq:
+        condition: service_healthy
+
+  search:  
+    container_name: Search  
+    build: 
+        dockerfile: Search/Dockerfile
+        context: .
+    networks:
+        - TM-Network
+    ports:
+      - 3002:80
+    depends_on:
+      rmq:
+        condition: service_healthy
+
+  user:  
+    container_name: user  
+    build: 
+        dockerfile: user/Dockerfile
+        context: .
+    networks:
+        - TM-Network
+    ports:
       - 3003:80
     depends_on:
-        - rmq
+      rmq:
+        condition: service_healthy
 
   rmq:
     image: rabbitmq:management
     ports:
       - 5672:5672
       - 15672:15672
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 1s
+      timeout: 5s
+      retries: 30
 
 networks:
   TM-Network:
