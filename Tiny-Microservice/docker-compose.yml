@@ -1,9 +1,9 @@
 version: "3.9"
 
 services:
-  apigateway:  
-    container_name: APIGateway  
-    build: 
+  apigateway:
+    container_name: APIGateway
+    build:
         dockerfile: APIGateway/Dockerfile
         context: .
     networks:
@@ -13,10 +13,12 @@ services:
     depends_on:
       rmq:
         condition: service_healthy
+      redis:
+        condition: service_healthy
 
   identity:
     container_name: Identity
-    build: 
+    build:
         dockerfile: Identity/Dockerfile
         context: .
     networks:
@@ -26,10 +28,12 @@ services:
     depends_on:
       rmq:
         condition: service_healthy
+      redis:
+        condition: service_healthy
 
-  search:  
-    container_name: Search  
-    build: 
+  search:
+    container_name: Search
+    build:
         dockerfile: Search/Dockerfile
         context: .
     networks:
@@ -39,10 +43,12 @@ services:
     depends_on:
       rmq:
         condition: service_healthy
+      redis:
+        condition: service_healthy
 
-  user:  
-    container_name: user  
-    build: 
+  user:
+    container_name: user
+    build:
         dockerfile: user/Dockerfile
         context: .
     networks:
@@ -52,6 +58,8 @@ services:
     depends_on:
       rmq:
         condition: service_healthy
+      redis:
+        condition: service_healthy
 
   rmq:
     image: rabbitmq:management
@@ -60,6 +68,16 @@ services:
       - 15672:15672
     healthcheck:
       test: rabbitmq-diagnostics check_port_connectivity
+      interval: 1s
+      timeout: 5s
+      retries: 30
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: redis-cli ping
       interval: 1s
       timeout: 5s
       retries: 30
