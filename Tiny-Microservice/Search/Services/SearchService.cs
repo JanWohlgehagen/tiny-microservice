@@ -22,11 +22,9 @@ public class SearchService
         {
             UserList.Add(new UserSimpleDTO
             {
-                // Assuming UserSimpleDTO has properties similar to UserFullDTO
                 id = e.id,
                 name = e.name,
                 imageURL = e.imageURL,
-                // Add other properties as needed
             });
         }
         else
