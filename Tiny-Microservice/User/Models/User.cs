@@ -1,8 +1,8 @@
-﻿namespace SharedModels;
+namespace User.Models;
 
-public class UserFullDTO
+public class User
 {
-    public string? id { get; set; }
+    public string id { get; set; }
     public string name { get; set; }
     public string imageURL { get; set; }
     public string email { get; set; }
@@ -12,4 +12,6 @@ public class UserFullDTO
     public string country { get; set; }
     public string postalCode { get; set; }
     public string about { get; set; }
+    
+    public UserSettings? settings { get; set; }
 }
