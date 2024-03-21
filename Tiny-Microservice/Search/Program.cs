@@ -1,3 +1,6 @@
+using CalculatorService.Communications;
+using Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -21,5 +24,15 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Create an instance of ResultService
+var searchService = new SearchService();
+
+// Start subtraction subscription
+Subscriptions.StartUpdateUserSubscription(searchService);
+
+// Start addition subscription
+Subscriptions.StartCreateUserSubscription(searchService);
+
 
 app.Run();
