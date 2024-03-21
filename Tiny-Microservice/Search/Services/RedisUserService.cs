@@ -33,7 +33,9 @@ namespace Search.Services
         return results";
 
             // Run the Lua script with the search string as an argument
-            RedisValue[] values = (await _db.ScriptEvaluateAsync(script, new RedisKey[] { searchString })).ToString().Split(',').Select(v => (RedisValue)v).ToArray();
+            RedisValue[] values = (await _db.ScriptEvaluateAsync(
+                script, new RedisKey[] { searchString }))
+                .ToString().Split(',').Select(v => (RedisValue)v).ToArray();
 
             // Deserialize the user objects and return them as a list
             List<User> users = values == null ? new List<User>() : values

@@ -26,11 +26,13 @@ namespace Search.Controllers
             try
             {
                 // Call the RedisUserService to get a list of users that match the search string
-                List<User> users = await _redisUserService.SearchUsers(searchString);
+                List<User> Redisusers = await _redisUserService.SearchUsers(searchString);
+
+                // or just call a list since this service will be running and it shouldnt be too hard on the ram for our limited database.
+                List<User> users = new List<User>();
 
                 if (users.Any())
                 {
-                    // Map the list of users to a list of UserDto objects
                     List<UserDto> userDtos = users.Select(user => new UserDto
                     {
                         username = user.username,
@@ -42,45 +44,12 @@ namespace Search.Controllers
                         city = user.city
                     }).ToList();
 
-                    // Return a 200 OK response with the list of UserDto objects in the response body
                     return Ok(userDtos);
                 }
                 else
                 {
-                    // Call the 'User' microservice to get a list of all users that match the search string
-                    List<User> usersFromUserService = await _userService.GetUsersBySearchString(searchString);
-                    // using RabbitMQ we need to call the 'User' microservice and get the users that arent found in the Redis cache.
-                    // Then store them below as seen.
-                    // We also need to return them to the Client hmm along with the ones there WERE found in Redis.
-
-                    if (usersFromUserService.Any())
-                    {
-                        // Save the users to Redis
-                        foreach (User user in usersFromUserService)
-                        {
-                            await _redisUserService.SaveUserToRedis(user);
-                        }
-
-                        // Map the list of users to a list of UserDto objects
-                        List<UserDto> userDtos = usersFromUserService.Select(user => new UserDto
-                        {
-                            username = user.username,
-                            email = user.email,
-                            profilePictureUrl = user.profilePictureUrl,
-                            address = user.address,
-                            phoneNumber = user.phoneNumber,
-                            bio = user.bio,
-                            city = user.city
-                        }).ToList();
-
-                        // Return a 200 OK response with the list of UserDto objects in the response body
-                        return Ok(userDtos);
-                    }
-                    else
-                    {
-                        // No users found, return a 404 Not Found response
-                        return NotFound();
-                    }
+                    // No users found, return a 404 Not Found response
+                    return NotFound();
                 }
             }
             catch
