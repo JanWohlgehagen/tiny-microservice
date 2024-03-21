@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity", "Identity\Identi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User", "User\User.csproj", "{4986B589-ADF1-44B4-82BA-45DFAB32FCFC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedModels", "SharedModels\SharedModels.csproj", "{C8F23101-184E-4E26-A084-3C53929CC204}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{4986B589-ADF1-44B4-82BA-45DFAB32FCFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4986B589-ADF1-44B4-82BA-45DFAB32FCFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4986B589-ADF1-44B4-82BA-45DFAB32FCFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8F23101-184E-4E26-A084-3C53929CC204}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8F23101-184E-4E26-A084-3C53929CC204}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8F23101-184E-4E26-A084-3C53929CC204}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8F23101-184E-4E26-A084-3C53929CC204}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
