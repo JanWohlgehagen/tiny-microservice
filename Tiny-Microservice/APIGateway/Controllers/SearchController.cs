@@ -19,12 +19,13 @@ namespace APIGateway.Controllers
 
             var request = await client.SendAsync(requestMessage);
             var authRequest = await AuthClient.SendAsync(AuthRequestMessage);
-            var result = bool.Parse(await authRequest.Content.ReadAsStringAsync());
+            var authResult = bool.Parse(await authRequest.Content.ReadAsStringAsync());
             if (request.EnsureSuccessStatusCode() != null)
             {
-                if (result)
+                if (authResult)
                 {
-                    return Ok();
+                    var result = await authRequest.Content.ReadAsStringAsync();
+                    return Ok(result);
                 }
                 return Unauthorized();
                 

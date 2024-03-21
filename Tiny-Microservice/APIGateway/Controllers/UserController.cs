@@ -26,14 +26,27 @@ namespace APIGateway.Controllers;
     [HttpPut("EditUser")]
     public async Task<IActionResult> EditUser(EditUserDTO userDto)
     {
+        var AuthClient = new HttpClient();
+        var AuthRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://localhost:3001/Identity/Authenticate");
+
         var client = new HttpClient();
         var requestMessage = new HttpRequestMessage(HttpMethod.Put, "http://localhost:3003/User/EditUser");
         requestMessage.Content = new StringContent(JsonSerializer.Serialize(userDto));
 
-        var request = await client.SendAsync(requestMessage);
-        if (request.EnsureSuccessStatusCode() != null)
+        var authRequest = await AuthClient.SendAsync(AuthRequestMessage);
+        var authResult = bool.Parse(await authRequest.Content.ReadAsStringAsync());
+        if (authResult)
         {
-            return Ok();
+            var request = await client.SendAsync(requestMessage);
+
+            if (request.EnsureSuccessStatusCode() != null)
+            {
+                return Ok();
+            }
+        }
+        else 
+        { 
+            return Unauthorized();
         }
         return BadRequest();
     }
@@ -41,14 +54,26 @@ namespace APIGateway.Controllers;
     [HttpPut("EditUserSettings")]
     public async Task<IActionResult> EditSettings(UserSettingsDTO userDto, string Id)
     {
-        var client = new HttpClient();
-        var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"http://localhost:3003/User/EditUserSettings?Id={Id}");
-        requestMessage.Content = new StringContent(JsonSerializer.Serialize(userDto));
+        var AuthClient = new HttpClient();
+        var AuthRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://localhost:3001/Identity/Authenticate");
 
-        var request = await client.SendAsync(requestMessage);
-        if (request.EnsureSuccessStatusCode() != null)
+        var authRequest = await AuthClient.SendAsync(AuthRequestMessage);
+        var authResult = bool.Parse(await authRequest.Content.ReadAsStringAsync());
+        if (authResult)
         {
-            return Ok();
+            var client = new HttpClient();
+            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"http://localhost:3003/User/EditUserSettings?Id={Id}");
+            requestMessage.Content = new StringContent(JsonSerializer.Serialize(userDto));
+
+            var request = await client.SendAsync(requestMessage);
+            if (request.EnsureSuccessStatusCode() != null)
+            {
+                return Ok();
+            }
+        }
+        else 
+        { 
+            return Unauthorized(); 
         }
         return BadRequest();
     }
