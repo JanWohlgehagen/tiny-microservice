@@ -4,59 +4,74 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Search.Entities;
-using Search.DTOs;
-using Search.Services;
+using SharedModels;
+using Services;
+using System.Text.Json;
 
-namespace Search.Controllers
+namespace Search.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class SearchUserController : Controller
 {
-    public class SearchUserController : Controller
+    private readonly SearchService _searchService;
+
+    public SearchUserController(SearchService searchService)
     {
-        private readonly RedisUserService _redisUserService;
+        _searchService = searchService;
+    }
 
-        public SearchUserController(RedisUserService redisUserService)
+    // GET: SearchUserController/
+    [HttpGet("FindUser")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> FindUser(string searchString)
+    {
+        try
         {
-            _redisUserService = redisUserService;
-        }
+            List<UserSimpleDTO> usersFromSearch = new List<UserSimpleDTO>();
 
-        // GET: SearchUserController/Get
-        [HttpGet]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Get(string searchString)
-        {
-            try
+            usersFromSearch = await _searchService.FindUser(searchString);
+
+            if (usersFromSearch != null && usersFromSearch.Count > 0)
             {
-                // Call the RedisUserService to get a list of users that match the search string
-                List<User> Redisusers = await _redisUserService.SearchUsers(searchString);
-
-                // or just call a list since this service will be running and it shouldnt be too hard on the ram for our limited database.
-                List<User> users = new List<User>();
-
-                if (users.Any())
+                using (var httpClient = new HttpClient())
                 {
-                    List<UserDto> userDtos = users.Select(user => new UserDto
+                    string apiUrl = "http://user:3003/User";
+                    HttpResponseMessage response = await httpClient.GetAsync(apiUrl + "?searchString=" + searchString);
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        username = user.username,
-                        email = user.email,
-                        profilePictureUrl = user.profilePictureUrl,
-                        address = user.address,
-                        phoneNumber = user.phoneNumber,
-                        bio = user.bio,
-                        city = user.city
-                    }).ToList();
+                        // Deserialize the response content to get the users
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
+                        List<UserSimpleDTO> newUsers = JsonSerializer.Deserialize<List<UserSimpleDTO>>(jsonResponse);
 
-                    return Ok(userDtos);
-                }
-                else
-                {
-                    // No users found, return a 404 Not Found response
-                    return NotFound();
+                        if (newUsers != null && newUsers.Count > 0)
+                        {
+                            Task addUserTask = Task.Run(async () =>
+                            {
+                                foreach (var user in newUsers)
+                                {
+                                    _searchService.AddUserAsync(user);
+                                }
+                            });
+                            addUserTask.Start();
+
+                            return Ok(newUsers);
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest("No such user found from UserService");
+                    }
                 }
             }
-            catch
-            {
-                // An error occurred while processing the request, return a 500 Internal Server Error response
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+
+            return Ok(usersFromSearch);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
         }
     }
 }
+
