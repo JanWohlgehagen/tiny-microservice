@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using SharedModels;
 using User.Data;
 using User.Helpers;
-using User.Models;
+using System.Linq;
+using User.PubSub;
 
 namespace User.Controllers
 {
@@ -13,31 +15,35 @@ namespace User.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly Context _context;
         private readonly UserConverter _userConverter;
+        private readonly PubService _pubService;
+        private readonly UserSettingsConverter _userSettingsConverter;
 
-        public UserController(ILogger<UserController> logger, Context context, UserConverter userConverter)
+        public UserController(ILogger<UserController> logger, Context context, UserConverter userConverter, PubService pubService, UserSettingsConverter userSettingsConverter)
         {
             _logger = logger;
             _context = context;
             _userConverter = userConverter;
+            _userSettingsConverter = userSettingsConverter;
+            _pubService = pubService;
         }
 
         [HttpPost(Name = "PostUser")]
-        public async Task<IActionResult> Post(PostUserDTO user)
+        public async Task<IActionResult> Post(UserFullDTO user)
         {   
             //convert DTO to user
-            TweeterUser tweeterUser = _userConverter.ConvertToNewUser(user);
+            Models.User newUser = _userConverter.ConvertToNewUser(user);
+            Models.UserSettings newUserSettings = _userSettingsConverter.ConvertToNewUserSettings(newUser.id);
             //Add user to database
-            _context.Users.Add(tweeterUser);
-
-            //Create user settings with user ID
-            UserSettings userSettings = new UserSettings();
-            userSettings.userId = tweeterUser.Id;
+            _context.Users.Add(newUser);
+            _context.UserSettings.Add(newUserSettings);
                
             //Save Changes in DB
             await _context.SaveChangesAsync();
 
             if (_context.ChangeTracker.HasChanges())
             {
+                UserFullDTO newUserDTO = _userConverter.ConvertToUserFullDTO(newUser);
+                _pubService.newUser(newUserDTO);
                 // Insertion was successful
                 return Ok("User inserted successfully.");
             }
@@ -50,18 +56,19 @@ namespace User.Controllers
         }
 
         [HttpPut(Name = "PutUser")]
-        public async Task<IActionResult> Put(EditUserDTO user)
+        public async Task<IActionResult> Put(UserFullDTO user)
         {
             //convert DTO to user
-            TweeterUser tweeterUser = _userConverter.ConvertToUser(user);
+            Models.User updatedUser = _userConverter.ConvertToUser(user);
             //Update user in database
-            _context.Users.Update(tweeterUser);
+            _context.Users.Update(updatedUser);
 
             //Save changes in DB
             await _context.SaveChangesAsync();
 
             if (_context.ChangeTracker.HasChanges())
             {
+                _pubService.updateUser(user);
                 // Insertion was successful
                 return Ok("User inserted successfully.");
             }
@@ -69,8 +76,21 @@ namespace User.Controllers
             {
                 _logger.LogError("ERROR | UserController | Failed to update user.");
                 return BadRequest("Failed to update user. Try again later.");
-
             }
+        }
+        
+        [HttpGet(Name = "GetUser")]
+        public async Task<IActionResult> GetUser(string userName)
+        {
+            IEnumerable<Models.User> users = _context.Users.Where(user => user.name.Contains(userName));
+    
+            if (!users.Any())
+            {
+                _logger.LogError("INFO | UserController | No users found with name containing: {userName}", userName);
+                return BadRequest("No users found.");
+            }
+    
+            return Ok(users);
         }
     }
 }

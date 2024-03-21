@@ -1,23 +1,38 @@
-﻿using User.Models;
+﻿using SharedModels;
 
 namespace User.Helpers
 {
     public class UserConverter
     {
-        public TweeterUser ConvertToUser(EditUserDTO user)
+        public Models.User ConvertToNewUser(UserFullDTO user)
         {
-            return new TweeterUser(user.Id, user.username, user.email, user.profilePictureUrl, user.address, user.phoneNumber, user.bio, user.city);
-            
+            var id = new Guid().ToString();
+            return new Models.User()
+            {
+                id = id, name = user.name, imageURL = user.imageURL, email = user.email, phoneNumber = user.phoneNumber,
+                address = user.address, city = user.city, country = user.country, postalCode = user.postalCode,
+                about = user.about
+            };
         }
-
-        public TweeterUser ConvertToNewUser(PostUserDTO user)
+        
+        public UserFullDTO ConvertToUserFullDTO(Models.User user)
         {
-            TweeterUser tweeterUser = new TweeterUser();
-            tweeterUser.Id = Guid.NewGuid().ToString();
-            tweeterUser.username = user.username;
-            tweeterUser.email = user.email;
-            return tweeterUser;
-
+            return new UserFullDTO()
+            {
+                id = user.id, name = user.name, imageURL = user.imageURL, email = user.email, phoneNumber = user.phoneNumber,
+                address = user.address, city = user.city, country = user.country, postalCode = user.postalCode,
+                about = user.about
+            };
+        }
+        
+        public Models.User ConvertToUser(UserFullDTO user)
+        {
+            return new Models.User()
+            {
+                id = user.id, name = user.name, imageURL = user.imageURL, email = user.email, phoneNumber = user.phoneNumber,
+                address = user.address, city = user.city, country = user.country, postalCode = user.postalCode,
+                about = user.about
+            };
         }
     }
 }

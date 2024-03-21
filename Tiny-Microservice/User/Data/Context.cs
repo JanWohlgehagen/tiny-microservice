@@ -1,39 +1,29 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using User.Models;
 
 namespace User.Data
 {
     public class Context : DbContext
     {
-        public string DbPath { get; set; }
-        public Context()
-        {
-            var commonPath = "MicroserviceCalculator\\MicroserviceCalculator\\CalculatorService\\Data";
-            var projectDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName; // Get the project's root directory
-
-            if (projectDirectory != null)
-            {
-                var fullPath = Path.Combine(projectDirectory, commonPath);
-
-                // Create directory if it doesn't exist
-                Directory.CreateDirectory(fullPath);
-
-                DbPath = Path.Combine(fullPath, "Tweetter.db");
-            }
-            else
-            {
-                var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                var fullPath = Path.Combine(desktopPath, "Tweetter.db");
-                DbPath = fullPath;
-            }
+        public Context(DbContextOptions<Context> options) : base(options) {
         }
 
-        public DbSet<User.Models.TweeterUser> Users { get; set; }
-        public DbSet<UserSettings> UsersSettings { get; set; }
+        // Specify a default location for the SQLite database
+        private const string DefaultDbPath = "WannaBeFirmaSQLite.db";
 
+        // Define a DbSet for your Result entity
+        public DbSet<Models.User> Users { get; set; }
+        public DbSet<Models.UserSettings> UserSettings { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-        => options.UseSqlite($"Data Source={DbPath}");
+        {
+            // Always use the default location for the SQLite database
+            options.UseSqlite($"Data Source={DefaultDbPath}");
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Models.User>().HasKey(r => r.id);
+            modelBuilder.Entity<Models.UserSettings>().HasKey(r => r.id);
+        }
 
     }
 }

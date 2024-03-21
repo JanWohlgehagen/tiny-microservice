@@ -1,6 +1,6 @@
-namespace User.Models;
+namespace SharedModels;
 
-public class UserSettings
+public class UserSettingsDTO
 {
     public string id { get; set; }
     public string userId { get; set; }
