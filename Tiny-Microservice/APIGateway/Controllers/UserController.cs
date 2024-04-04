@@ -1,5 +1,5 @@
-﻿using APIGateway.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using SharedModels;
 using System.Text.Json;
 
 namespace APIGateway.Controllers;
@@ -9,10 +9,10 @@ namespace APIGateway.Controllers;
     public class UserController : ControllerBase
     {
     [HttpPost("CreateUser")]
-    public async Task<IActionResult> PostUser(PostUserDTO userDto)
+    public async Task<IActionResult> PostUser(UserFullDTO userDto)
     {
         var client = new HttpClient();
-        var requestMessage = new HttpRequestMessage(HttpMethod.Post,"http://localhost:3003/User/JANSKRIVNOGETHER");
+        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "http://user:3003/User");
         requestMessage.Content = new StringContent(JsonSerializer.Serialize(userDto));
 
         var request = await client.SendAsync(requestMessage);
@@ -24,13 +24,13 @@ namespace APIGateway.Controllers;
     }
 
     [HttpPut("EditUser")]
-    public async Task<IActionResult> EditUser(EditUserDTO userDto)
+    public async Task<IActionResult> EditUser(UserFullDTO userDto)
     {
         var AuthClient = new HttpClient();
-        var AuthRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://localhost:3001/Identity/Authenticate");
+        var AuthRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://172.18.0.1:3001/Identity/Authenticate");
 
         var client = new HttpClient();
-        var requestMessage = new HttpRequestMessage(HttpMethod.Put, "http://localhost:3003/User/EditUser");
+        var requestMessage = new HttpRequestMessage(HttpMethod.Put, "http://172.18.0.1:3003/User");
         requestMessage.Content = new StringContent(JsonSerializer.Serialize(userDto));
 
         var authRequest = await AuthClient.SendAsync(AuthRequestMessage);
@@ -51,18 +51,23 @@ namespace APIGateway.Controllers;
         return BadRequest();
     }
 
+    [HttpGet("Exist")]
+    public string IExist()
+    {
+        return "Jan er så smuk <3";
+    }
     [HttpPut("EditUserSettings")]
     public async Task<IActionResult> EditSettings(UserSettingsDTO userDto, string Id)
     {
         var AuthClient = new HttpClient();
-        var AuthRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://localhost:3001/Identity/Authenticate");
+        var AuthRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://172.18.0.1:3001/Identity/Authenticate");
 
         var authRequest = await AuthClient.SendAsync(AuthRequestMessage);
         var authResult = bool.Parse(await authRequest.Content.ReadAsStringAsync());
         if (authResult)
         {
             var client = new HttpClient();
-            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"http://localhost:3003/User/EditUserSettings?Id={Id}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"http://172.18.0.1:3003/UserSettings?Id={Id}");
             requestMessage.Content = new StringContent(JsonSerializer.Serialize(userDto));
 
             var request = await client.SendAsync(requestMessage);
