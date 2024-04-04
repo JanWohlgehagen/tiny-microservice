@@ -19,6 +19,7 @@ public class SearchService : ISearchService
     // metode som rammes fra messaging, der tilføjer UserSimpleDTO til UserList
     internal void HandleCreateUser(UserFullDTO e)
     {
+        Console.WriteLine("Entering HandleCreateUser()");
         if (e != null)
         {
             UserList.Add(new UserSimpleDTO
@@ -27,6 +28,9 @@ public class SearchService : ISearchService
                 name = e.name,
                 imageURL = e.imageURL,
             });
+            Console.WriteLine("UserList updated");
+            Console.WriteLine("UserList.Count = " + UserList.Count);
+            Console.WriteLine("UserList = " + UserList);
         }
         else
         {
@@ -60,6 +64,8 @@ public class SearchService : ISearchService
     // Metode der finder users fra UserList
     internal Task<List<UserSimpleDTO>> FindUser(string searchString)
     {
+        Console.WriteLine("UserList inside FindUser() = " + UserList);
+        Console.WriteLine("UserList.Count inside FindUser() = " + UserList.Count);
         var filteredUsers = UserList.Where(user =>
             user.name.Contains(searchString, StringComparison.OrdinalIgnoreCase)
         ).ToList();

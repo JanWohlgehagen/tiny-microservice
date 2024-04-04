@@ -13,13 +13,13 @@ namespace APIGateway.Controllers
             var AuthClient = new HttpClient();
 
             Console.WriteLine("trying auth");
-            var AuthRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://172.21.0.1:3001/Identity/Authenticate");
+            var AuthRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://172.19.0.1:3001/Identity/Authenticate");
             Console.WriteLine("auth succesful");
 
             var client = new HttpClient();
 
             Console.WriteLine("trying to get FindUser");
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"http://172.21.0.1:3002/SearchUser/FindUser?searchString={searchword}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"http://172.19.0.1:3002/SearchUser/FindUser?searchString={searchword}");
             Console.WriteLine("Ran through to get FindUser");
 
             var request = await client.SendAsync(requestMessage);
@@ -43,7 +43,7 @@ namespace APIGateway.Controllers
         public async Task<IActionResult> Auth()
         {
             var AuthClient = new HttpClient();
-            var AuthRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://172.21.0.1:3001/Identity/Authenticate");
+            var AuthRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://172.19.0.1:3001/Identity/Authenticate");
             var authRequest = await AuthClient.SendAsync(AuthRequestMessage);
             var authResult = bool.Parse(await authRequest.Content.ReadAsStringAsync());
             return Ok(authResult);

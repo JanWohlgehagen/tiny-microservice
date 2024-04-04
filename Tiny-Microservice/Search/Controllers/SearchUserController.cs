@@ -30,8 +30,10 @@ public class SearchUserController : Controller
             List<UserSimpleDTO> usersFromSearch = new List<UserSimpleDTO>();
 
             usersFromSearch = await _searchService.FindUser(searchString);
+            Console.WriteLine("usersFromSearch.Count = " + usersFromSearch.Count);
+            Console.WriteLine("from searchService.Finduser - usersFromSearch = " + usersFromSearch);
 
-            if (usersFromSearch != null && usersFromSearch.Count > 0)
+            if (usersFromSearch == null && usersFromSearch.Count == 0)
             {
                 using (var httpClient = new HttpClient())
                 {
