@@ -23,6 +23,11 @@ namespace User.Data
         {
             modelBuilder.Entity<Models.User>().HasKey(r => r.id);
             modelBuilder.Entity<Models.UserSettings>().HasKey(r => r.id);
+            
+            modelBuilder.Entity<Models.User>()
+                .HasOne(u => u.settings)
+                .WithOne(s => s.User)
+                .HasForeignKey<Models.UserSettings>(s => s.userId);
         }
 
     }
