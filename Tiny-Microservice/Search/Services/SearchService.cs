@@ -2,13 +2,14 @@
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using Search.Entities;
+using Search.Services.Interfaces;
 using SharedModels;
 
 namespace Services;
 
-public class SearchService
+public class SearchService : ISearchService
 {
-    public List<UserSimpleDTO> UserList { get; set; }
+    public static List<UserSimpleDTO> UserList = new();
 
     public SearchService()
     {

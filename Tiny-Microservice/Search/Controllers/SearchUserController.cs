@@ -16,9 +16,9 @@ public class SearchUserController : Controller
 {
     private readonly SearchService _searchService;
 
-    public SearchUserController(SearchService searchService)
+    public SearchUserController()
     {
-        _searchService = searchService;
+        _searchService = new SearchService();
     }
 
     // GET: SearchUserController/

@@ -9,6 +9,7 @@ namespace Identity.Controllers
         [HttpGet("Authenticate")]
         public IActionResult Authenticate()
         {
+            Console.WriteLine("Authorize");
             return Ok(true);
         }
     }

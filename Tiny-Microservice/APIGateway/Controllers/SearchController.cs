@@ -11,10 +11,16 @@ namespace APIGateway.Controllers
         public async Task<IActionResult> search(string searchword)
         {
             var AuthClient = new HttpClient();
-            var AuthRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://172.18.0.1:3001/Identity/Authenticate");
+
+            Console.WriteLine("trying auth");
+            var AuthRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://172.21.0.1:3001/Identity/Authenticate");
+            Console.WriteLine("auth succesful");
 
             var client = new HttpClient();
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"http://172.18.0.1:3002/SearchUser/FindUser?searchString={searchword}");
+
+            Console.WriteLine("trying to get FindUser");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"http://172.21.0.1:3002/SearchUser/FindUser?searchString={searchword}");
+            Console.WriteLine("Ran through to get FindUser");
 
             var request = await client.SendAsync(requestMessage);
             var authRequest = await AuthClient.SendAsync(AuthRequestMessage);
@@ -23,7 +29,8 @@ namespace APIGateway.Controllers
             {
                 if (authResult)
                 {
-                    var result = await authRequest.Content.ReadAsStringAsync();
+                    Console.WriteLine("auth result = " + authResult);
+                    var result = await request.Content.ReadAsStringAsync();
                     return Ok(result);
                 }
                 return Unauthorized();
@@ -36,7 +43,7 @@ namespace APIGateway.Controllers
         public async Task<IActionResult> Auth()
         {
             var AuthClient = new HttpClient();
-            var AuthRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://172.18.0.1:3001/Identity/Authenticate");
+            var AuthRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://172.21.0.1:3001/Identity/Authenticate");
             var authRequest = await AuthClient.SendAsync(AuthRequestMessage);
             var authResult = bool.Parse(await authRequest.Content.ReadAsStringAsync());
             return Ok(authResult);
