@@ -16,6 +16,7 @@ namespace CalculatorService.Communications
 
             var topic = "createUserResult";
 
+
             bus.PubSub.SubscribeAsync<UserFullDTO>(topic + "-subscription", async (e, cancellationToken) =>
             {
                 if (e != null)
@@ -27,7 +28,7 @@ namespace CalculatorService.Communications
                     Console.WriteLine("Received null response from the message bus (createUserResult).");
                 }
             }, configure => configure.WithTopic(topic));
-            Console.WriteLine("createUserResult setup");
+            Console.WriteLine("createUserResult setup complete");
         }
 
         public static void StartUpdateUserSubscription(SearchService searchService)
@@ -48,7 +49,7 @@ namespace CalculatorService.Communications
                     Console.WriteLine("Received null response from the message bus (updateUserResult).");
                 }
             }, configure => configure.WithTopic(topic));
-            Console.WriteLine("updateUserResult setup");
+            Console.WriteLine("updateUserResult setup complete");
         }
     }
 }

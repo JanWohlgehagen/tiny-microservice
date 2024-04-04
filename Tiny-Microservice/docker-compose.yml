@@ -1,6 +1,21 @@
 version: "3.9"
 
 services:
+  rmq:
+    user: '999'
+    image: rabbitmq:3-management-alpine
+    container_name: rmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 1s
+      timeout: 5s
+      retries: 30
+    networks:
+        - TM-Network
+
   apigateway:
     container_name: APIGateway
     build:
@@ -52,19 +67,6 @@ services:
     depends_on:
       rmq:
         condition: service_healthy
-
-  rmq:
-    image: rabbitmq:management
-    ports:
-      - 5672:5672
-      - 15672:15672
-    healthcheck:
-      test: rabbitmq-diagnostics check_port_connectivity
-      interval: 1s
-      timeout: 5s
-      retries: 30
-    networks:
-    - TM-Network
 
 networks:
   TM-Network:
