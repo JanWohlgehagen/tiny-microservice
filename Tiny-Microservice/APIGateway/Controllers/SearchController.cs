@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using SharedModels;
 
 namespace APIGateway.Controllers
@@ -25,7 +26,8 @@ namespace APIGateway.Controllers
             var request = await client.SendAsync(requestMessage);
             var authRequest = await AuthClient.SendAsync(AuthRequestMessage);
             var authResult = bool.Parse(await authRequest.Content.ReadAsStringAsync());
-            if (request.EnsureSuccessStatusCode() != null)
+            var responseContent = await request.Content.ReadAsStringAsync();
+            if (request.IsSuccessStatusCode)
             {
                 if (authResult)
                 {
@@ -36,7 +38,13 @@ namespace APIGateway.Controllers
                 return Unauthorized();
                 
             }
-            return BadRequest();
+            if (request.StatusCode == HttpStatusCode.NotFound)
+            {
+                Console.WriteLine("No user found.");
+                return NotFound(responseContent);
+                
+            }
+            return BadRequest(responseContent);
         }
         
         [HttpGet("Auth")]

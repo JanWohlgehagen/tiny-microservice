@@ -33,9 +33,10 @@ namespace User.Controllers
             //convert DTO to user
             Models.User newUser = _userConverter.ConvertToNewUser(user);
             Models.UserSettings newUserSettings = _userSettingsConverter.ConvertToNewUserSettings(newUser.id);
+            newUser.settings = newUserSettings;
             //Add user to database
             _context.Users.Add(newUser);
-            _context.UserSettings.Add(newUserSettings);
+            //_context.UserSettings.Add(newUserSettings);
                
             //Save Changes in DB
             await _context.SaveChangesAsync();
@@ -44,14 +45,7 @@ namespace User.Controllers
             UserFullDTO newUserDTO = _userConverter.ConvertToUserFullDTO(newUser);
             _pubService.newUser(newUserDTO);
             // Insertion was successful
-            return Ok("User inserted successfully.");
-            
-            // else
-            // {
-            //     _logger.LogError("ERROR | UserController | Failed to insert user.");
-            //     return BadRequest("Failed to insert user. Try again later.");
-            //
-            // }
+            return Ok(newUserDTO);
         }
 
         [HttpPut(Name = "PutUser")]
@@ -65,17 +59,10 @@ namespace User.Controllers
             //Save changes in DB
             await _context.SaveChangesAsync();
 
-            if (_context.ChangeTracker.HasChanges())
-            {
-                _pubService.updateUser(user);
-                // Insertion was successful
-                return Ok("User inserted successfully.");
-            }
-            else
-            {
-                _logger.LogError("ERROR | UserController | Failed to update user.");
-                return BadRequest("Failed to update user. Try again later.");
-            }
+    
+            _pubService.updateUser(user);
+            // Insertion was successful
+            return Ok("User inserted successfully.");
         }
         
         [HttpGet(Name = "GetUser")]
@@ -85,11 +72,25 @@ namespace User.Controllers
     
             if (!users.Any())
             {
-                _logger.LogError("INFO | UserController | No users found with name containing: {userName}", userName);
-                return BadRequest("No users found.");
+                _logger.LogInformation("INFO | UserController | No users found with name containing: {userName}", userName);
+                return NotFound("No users found.");
             }
     
             return Ok(users);
+        }
+        
+        [HttpGet("PrintUserDB", Name = "PrintUserDB")]
+        public async Task<IActionResult> getUserDB()
+        {
+
+            var users = _context.Users.ToList();
+            Console.WriteLine("Found "+users.Count+" Items in user table.");
+            foreach (var user in users)
+            {
+                Console.WriteLine("name: " + user.name + " - id: " + user.id); 
+            }
+
+            return Ok("List was printed to console.");
         }
     }
 }

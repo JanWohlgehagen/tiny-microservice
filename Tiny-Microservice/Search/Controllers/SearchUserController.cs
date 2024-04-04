@@ -30,15 +30,19 @@ public class SearchUserController : Controller
             List<UserSimpleDTO> usersFromSearch = new List<UserSimpleDTO>();
 
             usersFromSearch = await _searchService.FindUser(searchString);
-            Console.WriteLine("usersFromSearch.Count = " + usersFromSearch.Count);
-            Console.WriteLine("from searchService.Finduser - usersFromSearch = " + usersFromSearch);
-
-            if (usersFromSearch == null && usersFromSearch.Count == 0)
+            Console.WriteLine("Found " + usersFromSearch.Count + " users in cache:");
+            foreach (var user in usersFromSearch)
             {
+                Console.WriteLine("name: " + user.name + " - id: " + user.id); 
+            }
+
+            if (usersFromSearch == null || usersFromSearch.Count == 0)
+            {
+                Console.WriteLine("Could not find user in cache, contacting user service...");
                 using (var httpClient = new HttpClient())
                 {
-                    string apiUrl = "http://user:3003/User";
-                    HttpResponseMessage response = await httpClient.GetAsync(apiUrl + "?searchString=" + searchString);
+                    string apiUrl = "http://172.19.0.1:3003/User";
+                    HttpResponseMessage response = await httpClient.GetAsync(apiUrl + "?userName=" + searchString);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -62,7 +66,8 @@ public class SearchUserController : Controller
                     }
                     else
                     {
-                        return BadRequest("No such user found from UserService");
+                        Console.WriteLine("Response does not have a successful status code: " + response.StatusCode);
+                        return NotFound("No such user found from UserService");
                     }
                 }
             }

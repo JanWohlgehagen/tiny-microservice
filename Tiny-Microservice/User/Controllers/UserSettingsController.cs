@@ -34,14 +34,23 @@ namespace User.Controllers
 
             //Save changes in DB
             await _context.SaveChangesAsync();
+            
+            // Insertion was successful
+            return Ok("User settings updated successfully.");
+        }
+        
+        [HttpGet("PrintUserSettingsDB", Name = "PrintUserSettingsDB")]
+        public async Task<IActionResult> getUserSettingsDB()
+        {
 
-            if (_context.ChangeTracker.HasChanges())
+            var settings = _context.UserSettings.ToList();
+            Console.WriteLine("Found "+settings.Count+" Items in user settings table.");
+            foreach (var setting in settings)
             {
-                // Insertion was successful
-                return Ok("User inserted successfully.");
+                Console.WriteLine($"User Settings - ID: {setting.id}, UserID: {setting.userId}, Theme: {setting.theme}, Language: {setting.language}");
             }
-            _logger.LogError("ERROR | UserController | Failed to update user.");
-            return BadRequest("Failed to update user. Try again later.");
+
+            return Ok("List was printed to console.");
         }
     }
 }

@@ -6,7 +6,7 @@ public class UserSettingsConverter : IUserSettingsConverter
 {
     public Models.UserSettings ConvertToNewUserSettings(string userId)
     {
-        var id = new Guid().ToString();
+        var id = Guid.NewGuid().ToString();
         return new Models.UserSettings()
         {
             id = id, userId = userId, theme = "light", language = "en"

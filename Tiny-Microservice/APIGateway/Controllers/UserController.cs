@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using SharedModels;
 using System.Text.Json;
@@ -19,11 +20,12 @@ namespace APIGateway.Controllers;
         Console.Write( await requestMessage.Content.ReadAsStringAsync());
 
         var request = await client.SendAsync(requestMessage);
-        if(request.EnsureSuccessStatusCode() != null)
+        var responseContent = await request.Content.ReadAsStringAsync();
+        if(request.IsSuccessStatusCode)
         {
-            return Ok();
+            return Ok(responseContent);
         }
-        return BadRequest();
+        return BadRequest(responseContent);
     }
 
     [HttpPut("EditUser")]
@@ -41,17 +43,14 @@ namespace APIGateway.Controllers;
         if (authResult)
         {
             var request = await client.SendAsync(requestMessage);
-
-            if (request.EnsureSuccessStatusCode() != null)
+            var responseContent = await request.Content.ReadAsStringAsync();
+            if (request.IsSuccessStatusCode)
             {
-                return Ok();
+                return Ok(responseContent);
             }
+            return BadRequest(responseContent);
         }
-        else 
-        { 
-            return Unauthorized();
-        }
-        return BadRequest();
+        return Unauthorized();
     }
 
     [HttpGet("Exist")]
@@ -61,7 +60,7 @@ namespace APIGateway.Controllers;
     }
     
     [HttpPut("EditUserSettings")]
-    public async Task<IActionResult> EditSettings(UserSettingsDTO userDto, string Id)
+    public async Task<IActionResult> EditSettings(UserSettingsDTO userDto)
     {
         var AuthClient = new HttpClient();
         var AuthRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://172.19.0.1:3001/Identity/Authenticate");
@@ -71,20 +70,18 @@ namespace APIGateway.Controllers;
         if (authResult)
         {
             var client = new HttpClient();
-            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"http://172.19.0.1:3003/UserSettings?Id={Id}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"http://172.19.0.1:3003/UserSettings?Id={userDto.id}");
             requestMessage.Content = new StringContent(JsonSerializer.Serialize(userDto), Encoding.UTF8, "application/json");
 
             var request = await client.SendAsync(requestMessage);
-            if (request.EnsureSuccessStatusCode() != null)
+            var responseContent = await request.Content.ReadAsStringAsync();
+            if (request.IsSuccessStatusCode)
             {
-                return Ok();
+                return Ok(responseContent);
             }
+            return BadRequest(responseContent);
         }
-        else 
-        { 
-            return Unauthorized(); 
-        }
-        return BadRequest();
+        return Unauthorized(); 
     }
 }
 

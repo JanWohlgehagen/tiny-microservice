@@ -6,7 +6,7 @@ namespace User.Helpers
     {
         public Models.User ConvertToNewUser(UserFullDTO user)
         {
-            var id = new Guid().ToString();
+            var id = Guid.NewGuid().ToString();
             return new Models.User()
             {
                 id = id, name = user.name, imageURL = user.imageURL, email = user.email, phoneNumber = user.phoneNumber,
