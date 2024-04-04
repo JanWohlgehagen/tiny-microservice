@@ -1,6 +1,7 @@
 ﻿using SharedModels;
 using Services;
 using EasyNetQ;
+using System.Reflection.PortableExecutable;
 
 namespace CalculatorService.Communications
 {
@@ -12,11 +13,11 @@ namespace CalculatorService.Communications
         public static void StartCreateUserSubscription(SearchService searchService)
         {
             _searchService = searchService;
-            _bus = RabbitHutch.CreateBus("host=rmq;username=guest;password=guest");
+            _bus = RabbitHutch.CreateBus("host=rmq;port=5672;virtualHost=/;username=guest;password=guest");
 
             var topic = "createUserResult";
 
-            var subscription = _bus.PubSub.SubscribeAsync<UserFullDTO>(topic, async (e, cancellationToken) =>
+            var subscription = _bus.PubSub.SubscribeAsync<UserFullDTO>("SearchService-" + Environment.MachineName, async (e, cancellationToken) =>
             {
                 if (e != null)
                 {
@@ -26,7 +27,8 @@ namespace CalculatorService.Communications
                 {
                     Console.WriteLine("Received null response from the message bus (createUserResult).");
                 }
-            }, configure => { });
+            }, configure => configure.WithTopic(topic));
+            Console.WriteLine("createUserResult setup");
         }
 
         public static void StartUpdateUserSubscription(SearchService searchService)
@@ -36,7 +38,7 @@ namespace CalculatorService.Communications
 
             var topic = "updateUserResult";
 
-            var subscription = _bus.PubSub.SubscribeAsync<UserFullDTO>(topic, async (e, cancellationToken) =>
+            var subscription = _bus.PubSub.SubscribeAsync<UserFullDTO>("SearchService-" + Environment.MachineName, async (e, cancellationToken) =>
             {
                 if (e != null)
                 {
@@ -46,7 +48,8 @@ namespace CalculatorService.Communications
                 {
                     Console.WriteLine("Received null response from the message bus (updateUserResult).");
                 }
-            }, configure => { });
+            }, configure => configure.WithTopic(topic));
+            Console.WriteLine("updateUserResult setup");
         }
     }
 }
