@@ -16,7 +16,7 @@ namespace CalculatorService.Communications
 
             var topic = "createUserResult";
 
-            bus.PubSub.SubscribeAsync<UserFullDTO>("SearchService-" + Environment.MachineName, async (e, cancellationToken) =>
+            bus.PubSub.SubscribeAsync<UserFullDTO>(topic + "-subscription", async (e, cancellationToken) =>
             {
                 if (e != null)
                 {
@@ -37,7 +37,7 @@ namespace CalculatorService.Communications
 
             var topic = "updateUserResult";
 
-            bus.PubSub.SubscribeAsync<UserFullDTO>("SearchService-" + Environment.MachineName, async (e, cancellationToken) =>
+            bus.PubSub.SubscribeAsync<UserFullDTO>(topic + "-subscription", async (e, cancellationToken) =>
             {
                 if (e != null)
                 {

@@ -1,10 +1,14 @@
 using User.Data;
+using User.Helpers;
 using User.PubSub;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<Context>();
+builder.Services.AddScoped<IUserConverter, UserConverter>();
+builder.Services.AddScoped<IUserSettingsConverter, UserSettingsConverter>();
+builder.Services.AddScoped<IPubService, PubService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

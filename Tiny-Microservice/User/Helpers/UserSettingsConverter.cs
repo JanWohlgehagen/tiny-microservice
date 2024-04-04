@@ -2,7 +2,7 @@ using SharedModels;
 
 namespace User.Helpers;
 
-public class UserSettingsConverter
+public class UserSettingsConverter : IUserSettingsConverter
 {
     public Models.UserSettings ConvertToNewUserSettings(string userId)
     {

@@ -23,7 +23,6 @@ public class SearchUserController : Controller
 
     // GET: SearchUserController/
     [HttpGet("FindUser")]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> FindUser(string searchString)
     {
         try

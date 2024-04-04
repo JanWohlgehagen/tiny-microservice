@@ -14,9 +14,9 @@ namespace User.Controllers
 
         private readonly ILogger<UserController> _logger;
         private readonly Context _context;
-        private readonly UserSettingsConverter _userSettingsConverter;
+        private readonly IUserSettingsConverter _userSettingsConverter;
 
-        public UserSettingsController(ILogger<UserController> logger, Context context, UserSettingsConverter userSettingsConverter)
+        public UserSettingsController(ILogger<UserController> logger, Context context, IUserSettingsConverter userSettingsConverter)
         {
             _logger = logger;
             _context = context;

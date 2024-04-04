@@ -14,11 +14,11 @@ namespace User.Controllers
 
         private readonly ILogger<UserController> _logger;
         private readonly Context _context;
-        private readonly UserConverter _userConverter;
-        private readonly PubService _pubService;
-        private readonly UserSettingsConverter _userSettingsConverter;
+        private readonly IUserConverter _userConverter;
+        private readonly IPubService _pubService;
+        private readonly IUserSettingsConverter _userSettingsConverter;
 
-        public UserController(ILogger<UserController> logger, Context context, UserConverter userConverter, PubService pubService, UserSettingsConverter userSettingsConverter)
+        public UserController(ILogger<UserController> logger, Context context, IUserConverter userConverter, IPubService pubService, IUserSettingsConverter userSettingsConverter)
         {
             _logger = logger;
             _context = context;
@@ -29,7 +29,7 @@ namespace User.Controllers
 
         [HttpPost(Name = "PostUser")]
         public async Task<IActionResult> Post(UserFullDTO user)
-        {   
+        {   Console.WriteLine("I was hit, help!");
             //convert DTO to user
             Models.User newUser = _userConverter.ConvertToNewUser(user);
             Models.UserSettings newUserSettings = _userSettingsConverter.ConvertToNewUserSettings(newUser.id);
@@ -40,19 +40,18 @@ namespace User.Controllers
             //Save Changes in DB
             await _context.SaveChangesAsync();
 
-            if (_context.ChangeTracker.HasChanges())
-            {
-                UserFullDTO newUserDTO = _userConverter.ConvertToUserFullDTO(newUser);
-                _pubService.newUser(newUserDTO);
-                // Insertion was successful
-                return Ok("User inserted successfully.");
-            }
-            else
-            {
-                _logger.LogError("ERROR | UserController | Failed to insert user.");
-                return BadRequest("Failed to insert user. Try again later.");
-
-            }
+           
+            UserFullDTO newUserDTO = _userConverter.ConvertToUserFullDTO(newUser);
+            _pubService.newUser(newUserDTO);
+            // Insertion was successful
+            return Ok("User inserted successfully.");
+            
+            // else
+            // {
+            //     _logger.LogError("ERROR | UserController | Failed to insert user.");
+            //     return BadRequest("Failed to insert user. Try again later.");
+            //
+            // }
         }
 
         [HttpPut(Name = "PutUser")]

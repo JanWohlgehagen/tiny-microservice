@@ -2,7 +2,7 @@ using SharedModels;
 
 namespace User.PubSub;
 
-public class PubService
+public class PubService: IPubService
 {
     public void newUser(UserFullDTO user)
     {

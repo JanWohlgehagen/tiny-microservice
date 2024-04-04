@@ -63,6 +63,8 @@ services:
       interval: 1s
       timeout: 5s
       retries: 30
+    networks:
+    - TM-Network
 
 networks:
   TM-Network:

@@ -2,7 +2,7 @@
 
 namespace User.Helpers
 {
-    public class UserConverter
+    public class UserConverter :IUserConverter
     {
         public Models.User ConvertToNewUser(UserFullDTO user)
         {
