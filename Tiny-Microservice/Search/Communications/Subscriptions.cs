@@ -7,17 +7,16 @@ namespace CalculatorService.Communications
 {
     public static class Subscriptions
     {
-        private static IBus? _bus;
         private static SearchService? _searchService;
 
         public static void StartCreateUserSubscription(SearchService searchService)
         {
             _searchService = searchService;
-            _bus = RabbitHutch.CreateBus("host=rmq;port=5672;virtualHost=/;username=guest;password=guest");
+            var bus = RabbitHutch.CreateBus("host=rmq;port=5672;virtualHost=/;username=guest;password=guest");
 
             var topic = "createUserResult";
 
-            var subscription = _bus.PubSub.SubscribeAsync<UserFullDTO>("SearchService-" + Environment.MachineName, async (e, cancellationToken) =>
+            bus.PubSub.SubscribeAsync<UserFullDTO>("SearchService-" + Environment.MachineName, async (e, cancellationToken) =>
             {
                 if (e != null)
                 {
@@ -34,11 +33,11 @@ namespace CalculatorService.Communications
         public static void StartUpdateUserSubscription(SearchService searchService)
         {
             _searchService = searchService;
-            _bus = RabbitHutch.CreateBus("host=rmq;username=guest;password=guest");
+            var bus = RabbitHutch.CreateBus("host=rmq;port=5672;virtualHost=/;username=guest;password=guest");
 
             var topic = "updateUserResult";
 
-            var subscription = _bus.PubSub.SubscribeAsync<UserFullDTO>("SearchService-" + Environment.MachineName, async (e, cancellationToken) =>
+            bus.PubSub.SubscribeAsync<UserFullDTO>("SearchService-" + Environment.MachineName, async (e, cancellationToken) =>
             {
                 if (e != null)
                 {
