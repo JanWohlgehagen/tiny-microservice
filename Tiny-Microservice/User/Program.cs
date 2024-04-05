@@ -1,4 +1,5 @@
 using User.Data;
+using User.Data.repo;
 using User.Helpers;
 using User.PubSub;
 
@@ -9,6 +10,7 @@ builder.Services.AddDbContext<Context>();
 builder.Services.AddScoped<IUserConverter, UserConverter>();
 builder.Services.AddScoped<IUserSettingsConverter, UserSettingsConverter>();
 builder.Services.AddScoped<IPubService, PubService>();
+builder.Services.AddScoped<IRepo,Repo>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

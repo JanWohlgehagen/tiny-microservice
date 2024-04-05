@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIGateway", "APIGateway\APIGateway.csproj", "{41BFFCF7-AECC-449A-9E85-13A53FEE1FBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIGateway", "APIGateway\APIGateway.csproj", "{41BFFCF7-AECC-449A-9E85-13A53FEE1FBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Search", "Search\Search.csproj", "{21E4F818-DEDC-45DF-9CBF-5805B862D5D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Search", "Search\Search.csproj", "{21E4F818-DEDC-45DF-9CBF-5805B862D5D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity", "Identity\Identity.csproj", "{E315A3F9-458A-4068-99DE-420318B1EEA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity", "Identity\Identity.csproj", "{E315A3F9-458A-4068-99DE-420318B1EEA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User", "User\User.csproj", "{4986B589-ADF1-44B4-82BA-45DFAB32FCFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "User", "User\User.csproj", "{4986B589-ADF1-44B4-82BA-45DFAB32FCFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedModels", "SharedModels\SharedModels.csproj", "{C8F23101-184E-4E26-A084-3C53929CC204}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedModels", "SharedModels\SharedModels.csproj", "{C8F23101-184E-4E26-A084-3C53929CC204}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{34FE6EFC-024B-4166-9DF8-32BDC13099F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{C8F23101-184E-4E26-A084-3C53929CC204}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8F23101-184E-4E26-A084-3C53929CC204}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8F23101-184E-4E26-A084-3C53929CC204}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34FE6EFC-024B-4166-9DF8-32BDC13099F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34FE6EFC-024B-4166-9DF8-32BDC13099F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34FE6EFC-024B-4166-9DF8-32BDC13099F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34FE6EFC-024B-4166-9DF8-32BDC13099F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

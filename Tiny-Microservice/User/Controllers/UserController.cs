@@ -4,6 +4,7 @@ using User.Data;
 using User.Helpers;
 using System.Linq;
 using User.PubSub;
+using User.Data.repo;
 
 namespace User.Controllers
 {
@@ -13,12 +14,12 @@ namespace User.Controllers
     {
 
         private readonly ILogger<UserController> _logger;
-        private readonly Context _context;
+        private readonly IRepo _context;
         private readonly IUserConverter _userConverter;
         private readonly IPubService _pubService;
         private readonly IUserSettingsConverter _userSettingsConverter;
 
-        public UserController(ILogger<UserController> logger, Context context, IUserConverter userConverter, IPubService pubService, IUserSettingsConverter userSettingsConverter)
+        public UserController(ILogger<UserController> logger, IRepo context, IUserConverter userConverter, IPubService pubService, IUserSettingsConverter userSettingsConverter)
         {
             _logger = logger;
             _context = context;
@@ -35,7 +36,8 @@ namespace User.Controllers
             Models.UserSettings newUserSettings = _userSettingsConverter.ConvertToNewUserSettings(newUser.id);
             newUser.settings = newUserSettings;
             //Add user to database
-            _context.Users.Add(newUser);
+            var list = _context.Users();
+            _context.Users().Add(newUser);
             //_context.UserSettings.Add(newUserSettings);
                
             //Save Changes in DB
@@ -54,7 +56,7 @@ namespace User.Controllers
             //convert DTO to user
             Models.User updatedUser = _userConverter.ConvertToUser(user);
             //Update user in database
-            _context.Users.Update(updatedUser);
+            _context.Users().Update(updatedUser);
 
             //Save changes in DB
             await _context.SaveChangesAsync();
@@ -68,7 +70,7 @@ namespace User.Controllers
         [HttpGet(Name = "GetUser")]
         public async Task<IActionResult> GetUser(string userName)
         {
-            IEnumerable<Models.User> users = _context.Users.Where(user => user.name.Contains(userName));
+            IEnumerable<Models.User> users = _context.Users().Where(user => user.name.Contains(userName));
     
             if (!users.Any())
             {
@@ -83,7 +85,7 @@ namespace User.Controllers
         public async Task<IActionResult> getUserDB()
         {
 
-            var users = _context.Users.ToList();
+            var users = _context.Users().ToList();
             Console.WriteLine("Found "+users.Count+" Items in user table.");
             foreach (var user in users)
             {
